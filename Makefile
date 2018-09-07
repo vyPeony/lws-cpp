@@ -25,7 +25,7 @@ build: $(PROGRAM)
 
 
 $(PROGRAM): $(OBJECTS)
-	$(CXX) $^ -o $@
+	$(CXX) $^ -pthread -o $@
 
 
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp

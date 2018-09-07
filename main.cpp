@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <iostream>
-#include <random>
+#include <thread>
+#include <mutex>
 
 #include "elona.hpp"
 #include "randomtitlegenerator.hpp"
@@ -33,6 +34,8 @@ gentleman::elona::RandomTitleGenerator title_generator;
 
 
 
+std::mutex cout_mutex;
+
 void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
 {
     const auto weapon_title = title_generator.generate(weapon_seed - 40000);
@@ -64,6 +67,7 @@ void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
         }
     }
 
+    std::lock_guard<std::mutex> guard{cout_mutex};
     std::cout << weapon_seed << "," << ((weapon_seed - 50500) / 17 + 1) << "," << weapon_title << "," << get_e_desc(type, power) << "," << power << "," << blood << std::endl;
 }
 
@@ -108,19 +112,25 @@ int main()
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;
 
-    gentleman::random::Generator gen;
-
-    for (int page = page_begin; page < page_end; ++page)
+    std::vector<std::thread> threads;
+    for (int i = 1; i < 17; ++i)
     {
-        for (int i = 1; i < 17; ++i)
-        {
-            const auto weapon_seed = 50500 + page * 17 + i;
-            const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
-            if (match)
+        threads.emplace_back([=] {
+            gentleman::random::Generator gen;
+            for (int page = page_begin; page < page_end; ++page)
             {
-                process_one_title(gen, weapon_seed);
+                const auto weapon_seed = 50500 + page * 17 + i;
+                const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
+                if (match)
+                {
+                    process_one_title(gen, weapon_seed);
+                }
             }
-        }
+        });
+    }
+    for (auto&& thread : threads)
+    {
+        thread.join();
     }
 
     return 0;

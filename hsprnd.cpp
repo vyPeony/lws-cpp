@@ -353,7 +353,7 @@ std::vector<std::vector<std::string>> load_rnlist()
 {
     std::vector<std::vector<std::string>> rnlist;
 
-    std::ifstream in{"ndata.csv"};
+    std::ifstream in{"ndata.csv", std::ios::binary};
     if (!in)
     {
         throw std::runtime_error{"Failed to load ndata.csv."};

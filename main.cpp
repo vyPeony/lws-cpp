@@ -101,6 +101,28 @@ bool match_enchantment(gentleman::random::Generator& gen, int weapon_seed, int t
 
 
 
+uint32_t get_num_threads()
+{
+    return std::max(std::thread::hardware_concurrency(), 1U);
+}
+
+
+
+void search(gentleman::random::Generator& gen, int page)
+{
+    for (int i = 1; i < 17; ++i)
+    {
+        const auto weapon_seed = 50500 + page * 17 + i;
+        const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
+        if (match)
+        {
+            process_one_title(gen, weapon_seed);
+        }
+    }
+}
+
+
+
 int main()
 {
     title_generator.initialize();
@@ -112,22 +134,30 @@ int main()
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;
 
+    const auto num_threads = get_num_threads();
+    const auto page_per_thread = std::max(1, (page_end - page_begin) / static_cast<int>(num_threads));
+
     std::vector<std::thread> threads;
-    for (int i = 1; i < 17; ++i)
+
+    int b = page_begin;
+    for (; b < page_end - page_per_thread; b += page_per_thread)
     {
         threads.emplace_back([=] {
             gentleman::random::Generator gen;
-            for (int page = page_begin; page < page_end; ++page)
+            for (int page = b; page < b + page_per_thread; ++page)
             {
-                const auto weapon_seed = 50500 + page * 17 + i;
-                const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
-                if (match)
-                {
-                    process_one_title(gen, weapon_seed);
-                }
+                search(gen, page);
             }
         });
     }
+    threads.emplace_back([=] {
+        gentleman::random::Generator gen;
+        for (int page = b; page < page_end; ++page)
+        {
+            search(gen, page);
+        }
+    });
+
     for (auto&& thread : threads)
     {
         thread.join();

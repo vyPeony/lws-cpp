@@ -9,10 +9,8 @@
 // MODIFY HERE.
 
 // [begin, end)
-constexpr auto begin = 20 * 10000 * 10000;
-constexpr auto end = 2147483647;
-// constexpr auto begin = 10 * 10000 * 10000;
-// constexpr auto end = 12 * 10000 * 10000;
+constexpr auto begin = 0;
+constexpr auto end = 1 * 10000 * 10000;
 constexpr auto seaching_type = 34;
 constexpr auto power_threshold = 545;
 
@@ -102,6 +100,10 @@ bool match_enchantment(int page, int n)
         exrand_randomize(seed);
         const auto e_level = randomenclv(4);
         const auto e_type = randomenc(e_level, weapon_type);
+        if (type >= 20 && e_type != type)
+        {
+            return false;
+        }
         const auto e_power = randomencp(has_ehekatl_feat, hammer_enhancement);
         const auto e_type2 = encadd(e_type);
         if (e_type2 != 0)

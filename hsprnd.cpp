@@ -337,10 +337,10 @@ std::vector<std::string> csvsort(const std::string& line, char separator)
         const auto separator_pos = line.find(separator, pos);
         if (separator_pos == std::string::npos)
         {
-            ret.at(i) = line.substr(pos);
+            ret[i] = line.substr(pos);
             break;
         }
-        ret.at(i) = line.substr(pos, separator_pos - pos);
+        ret[i] = line.substr(pos, separator_pos - pos);
         pos = separator_pos + 1;
     }
 
@@ -435,17 +435,17 @@ retry:
     {
         p_2 = rnd(static_cast<int>(rnlist.size()));
         p_1 = rnd(14);
-        if (!rnlist.at(p_2).at(p_1).empty())
+        if (!rnlist[p_2][p_1].empty())
         {
             break;
         }
     }
-    if (rnlist.at(p_2).at(14) == category_concrete)
+    if (rnlist[p_2][14] == category_concrete)
     {
         goto retry;
     }
-    randn2_ = rnlist.at(p_2).at(p_1);
-    randn2_1 = rnlist.at(p_2).at(14);
+    randn2_ = rnlist[p_2][p_1];
+    randn2_1 = rnlist[p_2][14];
     rtval_ = -1;
     do
     {
@@ -500,9 +500,9 @@ retry:
         {
             continue;
         }
-        if (rnlist.at(p_4).at(14) == randn2_1)
+        if (rnlist[p_4][14] == randn2_1)
         {
-            if (rnlist.at(p_4).at(14) != category_general && randn2_1 != category_general)
+            if (rnlist[p_4][14] != category_general && randn2_1 != category_general)
             {
                 continue;
             }
@@ -515,7 +515,7 @@ retry:
         {
             p_1 = 10 + rnd(2);
         }
-        if (rnlist.at(p_4).at(p_1).empty())
+        if (rnlist[p_4][p_1].empty())
         {
             continue;
         }
@@ -526,7 +526,7 @@ retry:
     {
         goto retry;
     }
-    randn2_ += rnlist.at(p_4).at(p_1);
+    randn2_ += rnlist[p_4][p_1];
     s_ = randn2_;
     if (s_.size() >= 28)
     {
@@ -556,29 +556,29 @@ int randomenc(int e_level, WeaponType weapon_type)
 
     for (size_t i = 0; i < encref.size(); ++i)
     {
-        if (encref.at(i).at(0) > e_level)
+        if (encref[i][0] > e_level)
         {
             continue;
         }
-        if (e_level >= 0 && encref.at(i).at(0) < 0)
+        if (e_level >= 0 && encref[i][0] < 0)
         {
             continue;
         }
-        if (encref.at(i).at(3) != 0)
+        if (encref[i][3] != 0)
         {
-            if (!encflt(category, encref.at(i).at(3)))
+            if (!encflt(category, encref[i][3]))
             {
-                if (encref.at(i).at(4) == 0)
+                if (encref[i][4] == 0)
                 {
                     continue;
                 }
-                else if (!encflt(category, encref.at(i).at(4)))
+                else if (!encflt(category, encref[i][4]))
                 {
                     continue;
                 }
             }
         }
-        sum_ += encref.at(i).at(2);
+        sum_ += encref[i][2];
         enclist.push_back(std::make_pair(static_cast<int>(i), sum_));
     }
     if (enclist.empty())

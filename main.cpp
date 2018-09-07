@@ -4,6 +4,21 @@
 #include "hsprnd.hpp"
 
 
+
+
+// MODIFY HERE.
+
+// [begin, end)
+constexpr auto begin = 0;
+constexpr auto end = 1000 * 1000 * 100;
+constexpr auto seaching_type = 34;
+constexpr auto power_threshold = 545;
+
+
+
+
+
+
 using namespace hsprnd;
 
 std::string get_weapon_title(int weapon_seed)
@@ -63,12 +78,13 @@ void process_one_title(int page, int n)
         }
     }
 
-    std::cout << "puts \"" << weapon_seed + 40000 << "," << page << ",#{title},#{desc}," << blood << "\"" << std::endl;
+    std::cout << "puts \"" << weapon_seed + 40000 << "," << (page + 1) << ",#{title},#{desc}," << blood << "\"" << std::endl;
 }
 
 
 
-int enhances_spells(int page, int n)
+template <int type, int threshold>
+bool match_enchantment(int page, int n)
 {
     const auto has_ehekatl_feat = true;
     const auto hammer_enhancement = 0;
@@ -95,18 +111,11 @@ int enhances_spells(int page, int n)
                     continue;
                 }
             }
-            if (e_type2 == 34)
-            {
-                return e_power;
-            }
-            else
-            {
-                return 0;
-            }
+            return e_type2 == type && e_power >= threshold;
         }
     }
 
-    return 0;
+    return false;
 }
 
 
@@ -134,19 +143,17 @@ int main()
 {
     std::cout << "puts 'Id,Page,Name,Enchantment,Power'" << std::endl;
 
-    const auto page_max = 1000 * 1000;
-    for (int page = 0; page < page_max; ++page)
+    const auto page_begin = begin / 17;
+    const auto page_end = end / 17;
+
+    for (int p = page_begin; p < page_end; ++p)
     {
-        for (int i = 0; i < 17; ++i)
+        for (int i = 1; i < 17; ++i)
         {
-            if (i % 17 == 0)
+            const auto match = match_enchantment<seaching_type, power_threshold>(p, i);
+            if (match)
             {
-                continue;
-            }
-            const auto e_power = enhances_spells(page, i);
-            if (e_power >= 545)
-            {
-                process_one_title(page, i);
+                process_one_title(p, i);
             }
         }
     }

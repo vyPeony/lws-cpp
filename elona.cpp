@@ -1,4 +1,4 @@
-#include "hsprnd.hpp"
+#include "elona.hpp"
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -116,9 +116,7 @@ std::string skillname(int id)
     case 187: return u8"見切り";
     case 188: return u8"魔力制御";
     case 189: return u8"射撃";
-    default:
-        assert(false);
-        break;
+    default: return "";
     }
 }
 

@@ -9,8 +9,10 @@
 // MODIFY HERE.
 
 // [begin, end)
-constexpr auto begin = 0;
-constexpr auto end = 1000 * 1000 * 100;
+constexpr auto begin = 20 * 10000 * 10000;
+constexpr auto end = 2147483647;
+// constexpr auto begin = 10 * 10000 * 10000;
+// constexpr auto end = 12 * 10000 * 10000;
 constexpr auto seaching_type = 34;
 constexpr auto power_threshold = 545;
 
@@ -142,6 +144,20 @@ bool match_enchantment(int page, int n)
 int main()
 {
     std::cout << "puts 'Id,Page,Name,Enchantment,Power'" << std::endl;
+
+
+
+    // for (int i = 0; i < 8; ++i)
+    // {
+    //     int n = 1047492392 - i - 10500 - 40000 - 13*10;
+    //     int p = n / 17;
+    //     int j = n % 17;
+    //     if (j == 0)
+    //         continue;
+    //
+    //     process_one_title(p, j);
+    // }
+
 
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;

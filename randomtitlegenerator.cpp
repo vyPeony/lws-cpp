@@ -122,8 +122,8 @@ std::string RandomTitleGenerator::generate(int seed) const
 retry:
     while (true)
     {
-        p_2 = gen(static_cast<int>(word_table_cp932.size()));
-        p_1 = gen(14);
+        p_2 = gen.rnd(static_cast<int>(word_table_cp932.size()));
+        p_1 = gen.rnd(14);
         if (!word_table_cp932[p_2][p_1].empty())
         {
             break;
@@ -140,17 +140,17 @@ retry:
     {
         if (p_1 == 10 || p_1 == 11)
         {
-            if (gen(5) == 0)
+            if (gen.rnd(5) == 0)
             {
                 p_1 = 0;
-                if (gen(2) == 0)
+                if (gen.rnd(2) == 0)
                 {
                     randn2_ += no;
                     randn2_u += "の";
                 }
                 break;
             }
-            switch (gen(5))
+            switch (gen.rnd(5))
             {
             case 0:
                 randn2_ += of;
@@ -170,7 +170,7 @@ retry:
         {
             randn2_ += no;
             randn2_u += "の";
-            if (gen(10) == 0)
+            if (gen.rnd(10) == 0)
             {
                 p_1 = 10;
             }
@@ -180,7 +180,7 @@ retry:
     bool ok{};
     for (int i = 0; i < 100; ++i)
     {
-        p_4 = gen(static_cast<int>(word_table_cp932.size()));
+        p_4 = gen.rnd(static_cast<int>(word_table_cp932.size()));
         if (p_4 == p_2)
         {
             continue;
@@ -194,11 +194,11 @@ retry:
         }
         if (p_1 < 10)
         {
-            p_1 = gen(2);
+            p_1 = gen.rnd(2);
         }
         else
         {
-            p_1 = 10 + gen(2);
+            p_1 = 10 + gen.rnd(2);
         }
         if (word_table_cp932[p_4][p_1].empty())
         {

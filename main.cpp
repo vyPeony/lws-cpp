@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <random>
 
 #include "elona.hpp"
 #include "randomtitlegenerator.hpp"

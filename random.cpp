@@ -1,8 +1,3 @@
-#pragma once
-
-#include <cstdint>
-
-
 /*
 This class is based on a HSP's DLL, EXRand.
 
@@ -47,6 +42,11 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "random.hpp"
+
+
+#define MIXBITS(u,v) ( ((u) & UMASK) | ((v) & LMASK) )
+#define TWIST(u,v) ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
 
 
 namespace gentleman
@@ -56,58 +56,67 @@ namespace random
 
 
 
-class Generator
+//MT関連の内部関数
+//MTのソースコードからEXRandで使ってるとこだけ抜粋
+
+/* initializes mt[N] with a seed */
+void Generator::init_genrand(unsigned long s)
 {
-public:
-    Generator(int32_t seed)
-        : linear_seed(static_cast<int64_t>(seed))
-    {
-        init_genrand(static_cast<uint64_t>(seed));
+    int j;
+    state[0] = s & 0xffffffffUL;
+    for (j = 1; j<N; j++) {
+        state[j] = (1812433253UL * (state[j - 1] ^ (state[j - 1] >> 30)) + j);
+        /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
+        /* In the previous versions, MSBs of the seed affect   */
+        /* only MSBs of the array state[].                     */
+        /* 2002/01/09 modified by Makoto Matsumoto             */
+        state[j] &= 0xffffffffUL;  /* for >32 bit machines */
     }
-
-
-    int32_t rnd(int32_t max)
-    {
-        linear_seed = linear_seed * 214013 + 2531011;
-        return static_cast<int32_t>((linear_seed >> 16) & 32767) % max;
-    }
-
-
-    int32_t rndex(int32_t max)
-    {
-        return static_cast<int32_t>(genrand_real2() * max);
-    }
-
-
-    void randomize(int32_t new_seed)
-    {
-        linear_seed = new_seed;
-        init_genrand(new_seed);
-    }
+    left = 1; initf = 1;
+}
 
 
 
-private:
-    /* Period parameters */
-    static constexpr int N = 624;
-    static constexpr int M = 397;
-    static constexpr unsigned long MATRIX_A = 0x9908b0dfUL;   /* constant vector a */
-    static constexpr unsigned long UMASK = 0x80000000UL; /* most significant w-r bits */
-    static constexpr unsigned long LMASK = 0x7fffffffUL; /* least significant r bits */
+void Generator::next_state()
+{
+    unsigned long *p = state;
+    int j;
+
+    /* if init_genrand() has not been called, */
+    /* a default initial seed is used         */
+    if (initf == 0) init_genrand(5489UL);
+
+    left = N;
+    next = state;
+
+    for (j = N - M + 1; --j; p++)
+        *p = p[M] ^ TWIST(p[0], p[1]);
+
+    for (j = M; --j; p++)
+        *p = p[M - N] ^ TWIST(p[0], p[1]);
+
+    *p = p[M - N] ^ TWIST(p[0], state[0]);
+}
 
 
-    int64_t linear_seed;
 
-    unsigned long state[N]; /* the array for the state vector  */
-    int left = 1;
-    int initf = 0;
-    unsigned long *next;
+/* generates a random number on [0,1)-real-interval */
+double Generator::genrand_real2()
+{
+    unsigned long y;
 
+    if (--left == 0) next_state();
+    y = *next++;
 
-    void init_genrand(unsigned long s);
-    void next_state();
-    double genrand_real2();
-};
+    /* Tempering */
+    y ^= (y >> 11);
+    y ^= (y << 7) & 0x9d2c5680UL;
+    y ^= (y << 15) & 0xefc60000UL;
+    y ^= (y >> 18);
+
+    return (double)y * (1.0 / 4294967296.0);
+    /* divided by 2^32 */
+}
 
 
 

@@ -28,5 +28,7 @@ std::string get_e_desc(int e_type, int e_power);
 
 int encadd(int e_type);
 
+void init_enclist_table();
+
 
 }

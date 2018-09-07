@@ -18,18 +18,6 @@ int limit(int x, int min, int max)
 
 
 
-bool encflt(int category, int filter)
-{
-    switch (filter)
-    {
-    case 1: return 30000 <= category && category < 50000;
-    case 2: return 12000 <= category && category < 24000;
-    case 3: return (12000 <= category && category < 24000) || category == 10000;
-    default: return category == filter;
-    }
-}
-
-
 struct EncRef
 {
     int id;
@@ -37,7 +25,7 @@ struct EncRef
     int rarity;
 };
 
-const std::vector<EncRef> encref_m{
+const std::vector<EncRef> encref_base{
     {1,  1, 3000},
     {2,  3, 7500},
     {3,  0, 4500},
@@ -61,28 +49,12 @@ const std::vector<EncRef> encref_m{
     {61, 2, 150},
 };
 
-const std::vector<EncRef> encref_r{
-    {1,  1, 3000},
-    {2,  3, 7500},
-    {3,  0, 4500},
-    {6,  0, 4500},
-    {7,  2, 900},
-    {22, 1, 150},
-    {23, 1, 400},
-    {24, 2, 300},
-    {25, 1, 400},
-    {26, 1, 600},
-    {27, 1, 600},
-    {28, 2, 500},
-    {32, 1, 250},
-    {33, 3, 200},
-    {48, 1, 300},
-    {56, 0, 30},
-    {57, 2, 200},
-    {58, 2, 200},
-    {59, 0, 30},
-    {61, 2, 150},
-};
+
+std::array<std::array<std::vector<std::pair<int, int>>, 5>, 2> enclist_table;
+std::array<std::array<int, 5>, 2> enclist_sum;
+
+
+
 
 
 std::string skillname(int id)
@@ -286,6 +258,33 @@ namespace exrand
 
 namespace hsprnd
 {
+
+
+
+void init_enclist_table()
+{
+    for (size_t i = 0; i < 2; ++i)
+    {
+        for (size_t j = 0; j < 5; ++j)
+        {
+            int sum{};
+            for (const auto& ref : encref_base)
+            {
+                if (ref.id == 34 && i == 1)
+                {
+                    continue;
+                }
+                if (ref.level > static_cast<int>(j))
+                {
+                    continue;
+                }
+                sum += ref.rarity;
+                enclist_table[i][j].push_back(std::make_pair(ref.id, sum));
+            }
+            enclist_sum[i][j] = sum;
+        }
+    }
+}
 
 
 int rnd(int max)
@@ -538,18 +537,8 @@ int randomenclv(int base_level)
 
 int randomenc(int e_level, WeaponType weapon_type)
 {
-    int sum{};
-    std::vector<std::pair<int, int>> enclist;
-
-    for (const auto& ref : (weapon_type == WeaponType::melee ? encref_m : encref_r))
-    {
-        if (ref.level > e_level)
-        {
-            continue;
-        }
-        sum += ref.rarity;
-        enclist.push_back(std::make_pair(ref.id, sum));
-    }
+    const auto& enclist = enclist_table[static_cast<size_t>(weapon_type)][e_level];
+    const auto sum = enclist_sum[static_cast<size_t>(weapon_type)][e_level];
 
     const auto p = exrand_rnd(sum);
     for (const auto& e : enclist)

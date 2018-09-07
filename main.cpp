@@ -145,6 +145,8 @@ bool match_enchantment(int page, int n)
 // }
 int main()
 {
+    init_enclist_table();
+
     std::cout << "puts 'Id,Page,Name,Enchantment,Power'" << std::endl;
 
 

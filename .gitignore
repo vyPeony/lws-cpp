@@ -3,3 +3,4 @@ bin/
 tmp/
 lws-cs
 lws
+tmp.rb

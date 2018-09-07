@@ -15,7 +15,9 @@ all: test
 
 test: build
 	@echo ----- run -----
-	@$(PROGRAM)
+	-@$(RM) -f tmp.rb
+	@$(PROGRAM) > tmp.rb
+	@ruby tmp.rb
 
 
 build: $(PROGRAM)

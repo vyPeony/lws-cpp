@@ -361,7 +361,7 @@ std::vector<std::vector<std::string>> load_rnlist()
     std::string buf;
     while (std::getline(in, buf, '\r')) // Read until CR.
     {
-        buf = buf.substr(0, buf.size() - 1); // Drop LF.
+        in.get(); // Skip leading LF.
         rnlist.push_back(csvsort(buf, ','));
     }
 
@@ -373,18 +373,6 @@ std::vector<std::vector<std::string>> load_rnlist()
 std::string random_title()
 {
     static const auto rnlist = load_rnlist();
-
-    // size_t i{};
-    // for (const auto rn : rnlist)
-    // {
-    //     size_t j{};
-    //     for (const auto r : rn)
-    //     {
-    //         std::cout << "rnlist[" << i << "][" << j << "] = " << rnlist.at(i).at(j) << std::endl;
-    //         ++j;
-    //     }
-    //     ++i;
-    // }
 
     // "具"
     const auto category_concrete = std::string{
@@ -454,7 +442,6 @@ retry:
     }
     if (rnlist.at(p_2).at(14) == category_concrete)
     {
-        std::cerr << "retry..." << std::endl;
         goto retry;
     }
     randn2_ = rnlist.at(p_2).at(p_1);
@@ -537,14 +524,12 @@ retry:
     }
     if (rtval_ == -1)
     {
-        std::cerr << "retry..." << std::endl;
         goto retry;
     }
     randn2_ += rnlist.at(p_4).at(p_1);
     s_ = randn2_;
     if (s_.size() >= 28)
     {
-        std::cerr << "retry..." << std::endl;
         goto retry;
     }
 
@@ -751,9 +736,11 @@ int encadd(int e_type)
     case 3:
         e_type = rnd(190 - 150) + 150;
         e_type += 3 * 10000;
+        break;
     case 6:
         e_type = rnd(20 - 10) + 10;
         e_type += 6 * 10000;
+        break;
     case 7:
         e_type = randomele();
         e_type += 7 * 10000;

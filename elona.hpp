@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "weapon_type.hpp"
 
 
@@ -16,8 +17,6 @@ void randomize(int new_seed);
 int exrand_rnd(int max);
 void exrand_randomize(int new_seed);
 
-
-std::string generate_title(int seed);
 
 
 int randomenc(int e_level, WeaponType weapon_type);

@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "elona.hpp"
+#include "randomtitlegenerator.hpp"
 
 
 
@@ -26,12 +27,15 @@ constexpr auto level = 1;
 using namespace hsprnd;
 
 
+gentleman::elona::RandomTitleGenerator title_generator;
+
+
 
 
 void process_one_title(int page, int n)
 {
     const auto weapon_seed = 50500 + page * 17 + n;
-    const auto weapon_title = generate_title(weapon_seed - 40000);
+    const auto weapon_title = title_generator.generate(weapon_seed - 40000);
     randomize(weapon_seed);
     const auto blood = 4 + rnd(12);
 
@@ -103,7 +107,7 @@ bool match_enchantment(int page, int n)
 
 // int main()
 // {
-//     std::cout << "Id,Name,Enc,Power,Blood" << std::endl;
+//     std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
 //
 //     const auto page_max = 1;
 //     for (int page = 0; page < page_max; ++page)
@@ -123,9 +127,11 @@ bool match_enchantment(int page, int n)
 // }
 int main()
 {
+    title_generator.initialize();
+
     init_enclist_table();
 
-    std::cout << "Id,Name,Enc,Power,Blood" << std::endl;
+    std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
 
 
 

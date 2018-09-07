@@ -25,23 +25,18 @@ constexpr auto level = 1;
 
 using namespace hsprnd;
 
-std::string get_weapon_title(int weapon_seed)
-{
-    randomize(weapon_seed);
-    return random_title();
-}
 
 
 
 void process_one_title(int page, int n)
 {
     const auto weapon_seed = 50500 + page * 17 + n;
-    const auto weapon_title = get_weapon_title(weapon_seed - 40000);
+    const auto weapon_title = generate_title(weapon_seed - 40000);
     randomize(weapon_seed);
     const auto blood = 4 + rnd(12);
 
-    std::string desc;
-
+    int type{};
+    int power{};
     for (int i = 0; i < 50; ++i)
     {
         const auto seed = weapon_seed + level * 10 + i;
@@ -60,12 +55,13 @@ void process_one_title(int page, int n)
                     continue;
                 }
             }
-            desc = get_e_desc(e_type2, e_power);
+            type = e_type2;
+            power = e_power;
             break;
         }
     }
 
-    std::cout << weapon_seed << "," << (page + 1) << "," << weapon_title << "," << desc << "," << blood << std::endl;
+    std::cout << weapon_seed << "," << (page + 1) << "," << weapon_title << "," << get_e_desc(type, power) << "," << power << "," << blood << std::endl;
 }
 
 
@@ -107,7 +103,7 @@ bool match_enchantment(int page, int n)
 
 // int main()
 // {
-//     std::cout << "Id,Name,Enchantment,Power" << std::endl;
+//     std::cout << "Id,Name,Enc,Power,Blood" << std::endl;
 //
 //     const auto page_max = 1;
 //     for (int page = 0; page < page_max; ++page)
@@ -129,7 +125,7 @@ int main()
 {
     init_enclist_table();
 
-    std::cout << "Id,Name,Enchantment,Power" << std::endl;
+    std::cout << "Id,Name,Enc,Power,Blood" << std::endl;
 
 
 

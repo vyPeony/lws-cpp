@@ -17,7 +17,7 @@ int exrand_rnd(int max);
 void exrand_randomize(int new_seed);
 
 
-std::string random_title();
+std::string generate_title(int seed);
 
 
 int randomenc(int e_level, WeaponType weapon_type);

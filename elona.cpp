@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "random.hpp"
 
 
 namespace
@@ -253,32 +254,6 @@ namespace hsprnd
 
 
 
-void init_enclist_table()
-{
-    for (size_t i = 0; i < 2; ++i)
-    {
-        for (size_t j = 0; j < 5; ++j)
-        {
-            int sum{};
-            for (const auto& ref : encref_base)
-            {
-                if (ref.id == 34 && i == 1)
-                {
-                    continue;
-                }
-                if (ref.level > static_cast<int>(j))
-                {
-                    continue;
-                }
-                sum += ref.rarity;
-                enclist_table[i][j].push_back(std::make_pair(ref.id, sum));
-            }
-            enclist_sum[i][j] = sum;
-        }
-    }
-}
-
-
 int rnd(int max)
 {
     seed = seed * 214013 + 2531011;
@@ -307,24 +282,53 @@ void exrand_randomize(int new_seed)
 
 
 
-std::vector<std::string> csvsort(const std::string& line, char separator)
+void init_enclist_table()
 {
-    std::vector<std::string> ret{15};
+    for (size_t i = 0; i < 2; ++i)
+    {
+        for (size_t j = 0; j < 5; ++j)
+        {
+            int sum{};
+            for (const auto& ref : encref_base)
+            {
+                if (ref.id == 34 && i == 1)
+                {
+                    continue;
+                }
+                if (ref.level > static_cast<int>(j))
+                {
+                    continue;
+                }
+                sum += ref.rarity;
+                enclist_table[i][j].push_back(std::make_pair(ref.id, sum));
+            }
+            enclist_sum[i][j] = sum;
+        }
+    }
+}
+
+
+
+
+
+std::vector<std::string> split_record(const std::string& line)
+{
+    std::vector<std::string> fields{15};
 
     size_t pos{};
-    for (size_t i = 0; i < ret.size(); ++i)
+    for (size_t i = 0; i < fields.size(); ++i)
     {
-        const auto separator_pos = line.find(separator, pos);
-        if (separator_pos == std::string::npos)
+        const auto comma_pos = line.find(',', pos);
+        if (comma_pos == std::string::npos)
         {
-            ret[i] = line.substr(pos);
+            fields[i] = line.substr(pos);
             break;
         }
-        ret[i] = line.substr(pos, separator_pos - pos);
-        pos = separator_pos + 1;
+        fields[i] = line.substr(pos, comma_pos - pos);
+        pos = comma_pos + 1;
     }
 
-    return ret;
+    return fields;
 }
 
 
@@ -341,7 +345,7 @@ std::vector<std::vector<std::string>> load_rnlist(const std::string& filename)
     std::string buf;
     while (std::getline(in, buf))
     {
-        rnlist.push_back(csvsort(buf, ','));
+        rnlist.push_back(split_record(buf));
     }
 
     return rnlist;
@@ -349,8 +353,10 @@ std::vector<std::vector<std::string>> load_rnlist(const std::string& filename)
 
 
 
-std::string random_title()
+std::string generate_title(int seed)
 {
+    gentleman::random::Generator gen{seed};
+
     static const auto rnlist = load_rnlist("ndata.csv");
     static const auto rnlist2 = load_rnlist("ndata-utf8.csv");
 
@@ -410,8 +416,8 @@ std::string random_title()
 retry:
     while (true)
     {
-        p_2 = rnd(static_cast<int>(rnlist.size()));
-        p_1 = rnd(14);
+        p_2 = gen(static_cast<int>(rnlist.size()));
+        p_1 = gen(14);
         if (!rnlist[p_2][p_1].empty())
         {
             break;
@@ -428,17 +434,17 @@ retry:
     {
         if (p_1 == 10 || p_1 == 11)
         {
-            if (rnd(5) == 0)
+            if (gen(5) == 0)
             {
                 p_1 = 0;
-                if (rnd(2) == 0)
+                if (gen(2) == 0)
                 {
                     randn2_ += no;
                     randn2_u += "の";
                 }
                 break;
             }
-            switch (rnd(5))
+            switch (gen(5))
             {
             case 0:
                 randn2_ += of;
@@ -458,7 +464,7 @@ retry:
         {
             randn2_ += no;
             randn2_u += "の";
-            if (rnd(10) == 0)
+            if (gen(10) == 0)
             {
                 p_1 = 10;
             }
@@ -468,7 +474,7 @@ retry:
     bool ok{};
     for (int i = 0; i < 100; ++i)
     {
-        p_4 = rnd(static_cast<int>(rnlist.size()));
+        p_4 = gen(static_cast<int>(rnlist.size()));
         if (p_4 == p_2)
         {
             continue;
@@ -482,11 +488,11 @@ retry:
         }
         if (p_1 < 10)
         {
-            p_1 = rnd(2);
+            p_1 = gen(2);
         }
         else
         {
-            p_1 = 10 + rnd(2);
+            p_1 = 10 + gen(2);
         }
         if (rnlist[p_4][p_1].empty())
         {

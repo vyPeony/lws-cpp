@@ -341,9 +341,8 @@ std::vector<std::vector<std::string>> load_rnlist()
         throw std::runtime_error{"Failed to load ndata.csv."};
     }
     std::string buf;
-    while (std::getline(in, buf, '\r')) // Read until CR.
+    while (std::getline(in, buf))
     {
-        in.get(); // Skip leading LF.
         rnlist.push_back(csvsort(buf, ','));
     }
 

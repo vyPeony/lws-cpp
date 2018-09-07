@@ -156,6 +156,8 @@ int main()
     //     process_one_title(p, j);
     // }
 
+    int begin = 0;
+    int end = 17;
 
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;
@@ -165,7 +167,7 @@ int main()
         for (int i = 1; i < 17; ++i)
         {
             const auto match = match_enchantment<seaching_type, power_threshold>(p, i);
-            if (match)
+            // if (match)
             {
                 process_one_title(p, i);
             }

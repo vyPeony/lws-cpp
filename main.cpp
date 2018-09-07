@@ -33,29 +33,27 @@ gentleman::elona::RandomTitleGenerator title_generator;
 
 
 
-void process_one_title(int page, int n)
+void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
 {
-    const auto weapon_seed = 50500 + page * 17 + n;
     const auto weapon_title = title_generator.generate(weapon_seed - 40000);
-    randomize(weapon_seed);
-    const auto blood = 4 + rnd(12);
+    gen.randomize(weapon_seed);
+    const auto blood = 4 + gen.rnd(12);
 
     int type{};
     int power{};
     for (int i = 0; i < 50; ++i)
     {
         const auto seed = weapon_seed + level * 10 + i;
-        randomize(seed);
-        exrand_randomize(seed);
-        const auto e_level = rnd(5);
-        const auto e_type = randomenc(e_level, weapon_type);
-        const auto e_power = randomencp(has_ehekatl_feat, hammer_enhancement);
-        const auto e_type2 = encadd(e_type);
+        gen.randomize(seed);
+        const auto e_level = gen.rnd(5);
+        const auto e_type = randomenc(gen, e_level, weapon_type);
+        const auto e_power = randomencp(gen, has_ehekatl_feat, hammer_enhancement);
+        const auto e_type2 = encadd(gen, e_type);
         if (e_type2 != 0)
         {
             if (e_type2 == 34)
             {
-                if (rnd(3))
+                if (gen.rnd(3))
                 {
                     continue;
                 }
@@ -66,34 +64,26 @@ void process_one_title(int page, int n)
         }
     }
 
-    std::cout << weapon_seed << "," << (page + 1) << "," << weapon_title << "," << get_e_desc(type, power) << "," << power << "," << blood << std::endl;
+    std::cout << weapon_seed << "," << ((weapon_seed - 50500) / 17 + 1) << "," << weapon_title << "," << get_e_desc(type, power) << "," << power << "," << blood << std::endl;
 }
 
 
 
-template <int type, int threshold>
-bool match_enchantment(int page, int n)
+bool match_enchantment(gentleman::random::Generator& gen, int weapon_seed, int type, int threshold)
 {
-    const auto weapon_seed = 50500 + page * 17 + n;
-
     for (int i = 0; i < 50; ++i)
     {
         const auto seed = weapon_seed + level * 10 + i;
-        randomize(seed);
-        exrand_randomize(seed);
-        const auto e_level = rnd(5);
-        const auto e_type = randomenc(e_level, weapon_type);
-        if (type >= 20 && e_type != type)
-        {
-            return false;
-        }
-        const auto e_power = randomencp(has_ehekatl_feat, hammer_enhancement);
-        const auto e_type2 = encadd(e_type);
+        gen.randomize(seed);
+        const auto e_level = gen.rnd(5);
+        const auto e_type = randomenc(gen, e_level, weapon_type);
+        const auto e_power = randomencp(gen, has_ehekatl_feat, hammer_enhancement);
+        const auto e_type2 = encadd(gen, e_type);
         if (e_type2 != 0)
         {
             if (e_type2 == 34)
             {
-                if (rnd(3))
+                if (gen.rnd(3))
                 {
                     continue;
                 }
@@ -106,26 +96,7 @@ bool match_enchantment(int page, int n)
 }
 
 
-// int main()
-// {
-//     std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
-//
-//     const auto page_max = 1;
-//     for (int page = 0; page < page_max; ++page)
-//     {
-//         for (int i = 0; i < 17; ++i)
-//         {
-//             if (i % 17 == 0)
-//             {
-//                 std::cout << "(選択不可)" << std::endl;
-//                 continue;
-//             }
-//             process_one_title(page, i);
-//         }
-//     }
-//
-//     return 0;
-// }
+
 int main()
 {
     title_generator.initialize();
@@ -134,33 +105,20 @@ int main()
 
     std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
 
-
-
-    // for (int i = 0; i < 8; ++i)
-    // {
-    //     int n = 1047492392 - i - 10500 - 40000 - 13*10;
-    //     int p = n / 17;
-    //     int j = n % 17;
-    //     if (j == 0)
-    //         continue;
-    //
-    //     process_one_title(p, j);
-    // }
-
-    // int begin = 0;
-    // int end = 100;
-
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;
 
-    for (int p = page_begin; p < page_end; ++p)
+    gentleman::random::Generator gen;
+
+    for (int page = page_begin; page < page_end; ++page)
     {
         for (int i = 1; i < 17; ++i)
         {
-            const auto match = match_enchantment<seaching_type, power_threshold>(p, i);
+            const auto weapon_seed = 50500 + page * 17 + i;
+            const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
             if (match)
             {
-                process_one_title(p, i);
+                process_one_title(gen, weapon_seed);
             }
         }
     }

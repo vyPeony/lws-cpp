@@ -59,7 +59,7 @@ namespace random
 class Generator
 {
 public:
-    Generator(int32_t seed)
+    Generator(int32_t seed = 0)
         : linear_seed(static_cast<int64_t>(seed))
     {
         init_genrand(static_cast<uint64_t>(seed));

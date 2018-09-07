@@ -8,9 +8,6 @@
 namespace
 {
 
-int64_t seed;
-
-
 
 struct EncRef
 {
@@ -126,161 +123,8 @@ std::string skillname(int id)
 
 
 
-
-
-/*
-This license is applied for inner exrand namespace and HSPexrand_rnd/HSPexrand_randomize.
-
-
-0〜32kじゃ何もできん!! 拡張乱数 EXRand
-(c)2002 D.N.A. Softwares
-このDLLはフリーソフトウェアです。
-
-
-乱数生成部は松本眞氏と西村拓士氏による
-Mersenne Twisterを使用しています。a
-
-
-Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
-
-3. The names of its contributors may not be used to endorse or promote
-products derived from this software without specific prior written
-permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-namespace exrand
-{
-
-
-    /* Period parameters */
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
-#define UMASK 0x80000000UL /* most significant w-r bits */
-#define LMASK 0x7fffffffUL /* least significant r bits */
-#define MIXBITS(u,v) ( ((u) & UMASK) | ((v) & LMASK) )
-#define TWIST(u,v) ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
-
-    unsigned long state[N]; /* the array for the state vector  */
-    int left = 1;
-    int initf = 0;
-    unsigned long *next;
-
-    //MT関連の内部関数
-    //MTのソースコードからEXRandで使ってるとこだけ抜粋
-
-    /* initializes mt[N] with a seed */
-    void init_genrand(unsigned long s)
-    {
-        int j;
-        state[0] = s & 0xffffffffUL;
-        for (j = 1; j<N; j++) {
-            state[j] = (1812433253UL * (state[j - 1] ^ (state[j - 1] >> 30)) + j);
-            /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-            /* In the previous versions, MSBs of the seed affect   */
-            /* only MSBs of the array state[].                     */
-            /* 2002/01/09 modified by Makoto Matsumoto             */
-            state[j] &= 0xffffffffUL;  /* for >32 bit machines */
-        }
-        left = 1; initf = 1;
-    }
-
-    void next_state()
-    {
-        unsigned long *p = state;
-        int j;
-
-        /* if init_genrand() has not been called, */
-        /* a default initial seed is used         */
-        if (initf == 0) init_genrand(5489UL);
-
-        left = N;
-        next = state;
-
-        for (j = N - M + 1; --j; p++)
-            *p = p[M] ^ TWIST(p[0], p[1]);
-
-        for (j = M; --j; p++)
-            *p = p[M - N] ^ TWIST(p[0], p[1]);
-
-        *p = p[M - N] ^ TWIST(p[0], state[0]);
-    }
-
-    /* generates a random number on [0,1)-real-interval */
-    double genrand_real2()
-    {
-        unsigned long y;
-
-        if (--left == 0) next_state();
-        y = *next++;
-
-        /* Tempering */
-        y ^= (y >> 11);
-        y ^= (y << 7) & 0x9d2c5680UL;
-        y ^= (y << 15) & 0xefc60000UL;
-        y ^= (y >> 18);
-
-        return (double)y * (1.0 / 4294967296.0);
-        /* divided by 2^32 */
-    }
-
-}
-
-
-
 namespace hsprnd
 {
-
-
-
-int rnd(int max)
-{
-    seed = seed * 214013 + 2531011;
-    return static_cast<int>((seed >> 16) & 32767) % max;
-}
-
-
-void randomize(int new_seed)
-{
-    seed = new_seed;
-}
-
-
-
-int exrand_rnd(int max)
-{
-    return static_cast<int>(exrand::genrand_real2() * max);
-}
-
-
-
-void exrand_randomize(int new_seed)
-{
-    exrand::init_genrand(static_cast<uint64_t>(new_seed));
-}
 
 
 
@@ -312,19 +156,12 @@ void init_enclist_table()
 
 
 
-
-
-
-
-
-
-
-int randomenc(int e_level, WeaponType weapon_type)
+int randomenc(gentleman::random::Generator& gen, int e_level, WeaponType weapon_type)
 {
     const auto& enclist = enclist_table[static_cast<size_t>(weapon_type)][e_level];
     const auto sum = enclist_sum[static_cast<size_t>(weapon_type)][e_level];
 
-    const auto p = exrand_rnd(sum);
+    const auto p = gen.rndex(sum);
     for (const auto& e : enclist)
     {
         if (p < e.second)
@@ -337,7 +174,7 @@ int randomenc(int e_level, WeaponType weapon_type)
 
 
 
-int randomencp(bool has_ehekatl_feat, int hammer_enhancement)
+int randomencp(gentleman::random::Generator& gen, bool has_ehekatl_feat, int hammer_enhancement)
 {
     if (hammer_enhancement)
     {
@@ -346,7 +183,7 @@ int randomencp(bool has_ehekatl_feat, int hammer_enhancement)
     }
     else
     {
-        return rnd(rnd(500 + has_ehekatl_feat * 50) + 1) + 1;
+        return gen.rnd(gen.rnd(500 + has_ehekatl_feat * 50) + 1) + 1;
     }
 }
 
@@ -418,7 +255,7 @@ std::string get_e_desc(int e_type, int e_power)
 
 
 
-int randomele()
+int randomele(gentleman::random::Generator& gen)
 {
     const std::array<int, 11> rarity{{
         1,
@@ -434,15 +271,15 @@ int randomele()
         5,
     }};
 
-    auto e = rnd(11);
+    auto e = gen.rnd(11);
     const auto r = rarity[e];
     for (int i = 0; i < r - 1; ++i)
     {
-        const auto e2 = rnd(11);
+        const auto e2 = gen.rnd(11);
         const auto r2 = rarity[e2];
         if (r2 < r)
         {
-            if (rnd(2) == 0)
+            if (gen.rnd(2) == 0)
             {
                 e = e2;
             }
@@ -454,7 +291,7 @@ int randomele()
 
 
 
-int encadd(int e_type)
+int encadd(gentleman::random::Generator& gen, int e_type)
 {
     if (e_type >= 20 || e_type == 0)
     {
@@ -463,11 +300,11 @@ int encadd(int e_type)
 
     switch (e_type)
     {
-    case 1: return 10000 + rnd(10) + 10;
-    case 2: return 20000 + randomele();
-    case 3: return 30000 + rnd(40) + 150;
-    case 6: return 60000 + rnd(10) + 10;
-    case 7: return 70000 + randomele();
+    case 1: return 10000 + gen.rnd(10) + 10;
+    case 2: return 20000 + randomele(gen);
+    case 3: return 30000 + gen.rnd(40) + 150;
+    case 6: return 60000 + gen.rnd(10) + 10;
+    case 7: return 70000 + randomele(gen);
     default: return 0;
     }
 }

@@ -94,14 +94,6 @@ std::string RandomTitleGenerator::generate(int seed) const
         static_cast<char>(0xCC),
     };
 
-    // "ザ・"
-    const auto the = std::string{
-        static_cast<char>(0x83),
-        static_cast<char>(0x55),
-        static_cast<char>(0x81),
-        static_cast<char>(0x45),
-    };
-
     // "・オブ・"
     const auto of = std::string{
         static_cast<char>(0x81),

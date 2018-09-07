@@ -11,12 +11,6 @@ namespace
 int64_t seed;
 
 
-int limit(int x, int min, int max)
-{
-    return std::min(std::max(x, min), max);
-}
-
-
 
 struct EncRef
 {
@@ -528,13 +522,6 @@ the_end:
 
 
 
-int randomenclv(int base_level)
-{
-    return rnd(limit(base_level, 0, 4) + 1);
-}
-
-
-
 int randomenc(int e_level, WeaponType weapon_type)
 {
     const auto& enclist = enclist_table[static_cast<size_t>(weapon_type)][e_level];
@@ -636,7 +623,7 @@ std::string get_e_desc(int e_type, int e_power)
 
 int randomele()
 {
-    const std::vector<int> rarity = {
+    const std::array<int, 11> rarity{{
         1,
         1,
         1,
@@ -648,14 +635,14 @@ int randomele()
         3,
         4,
         5,
-    };
+    }};
 
-    auto e = rnd(61 - 50) + 50;
-    const auto r = rarity.at(e - 50);
+    auto e = rnd(11);
+    const auto r = rarity[e];
     for (int i = 0; i < r - 1; ++i)
     {
-        const auto e2 = rnd(61 - 50) + 50;
-        const auto r2 = rarity.at(e2 - 50);
+        const auto e2 = rnd(11);
+        const auto r2 = rarity[e2];
         if (r2 < r)
         {
             if (rnd(2) == 0)
@@ -665,7 +652,7 @@ int randomele()
         }
     }
 
-    return e;
+    return e + 50;
 }
 
 
@@ -679,32 +666,13 @@ int encadd(int e_type)
 
     switch (e_type)
     {
-    case 1:
-        e_type = rnd(20 - 10) + 10;
-        e_type += 1 * 10000;
-        break;
-    case 2:
-        e_type = randomele();
-        e_type += 2 * 10000;
-        break;
-    case 3:
-        e_type = rnd(190 - 150) + 150;
-        e_type += 3 * 10000;
-        break;
-    case 6:
-        e_type = rnd(20 - 10) + 10;
-        e_type += 6 * 10000;
-        break;
-    case 7:
-        e_type = randomele();
-        e_type += 7 * 10000;
-        break;
-    default:
-        assert(false);
-        break;
+    case 1: return 10000 + rnd(10) + 10;
+    case 2: return 20000 + randomele();
+    case 3: return 30000 + rnd(40) + 150;
+    case 6: return 60000 + rnd(10) + 10;
+    case 7: return 70000 + randomele();
+    default: return 0;
     }
-
-    return e_type;
 }
 
 

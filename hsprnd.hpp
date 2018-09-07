@@ -20,7 +20,6 @@ void exrand_randomize(int new_seed);
 std::string random_title();
 
 
-int randomenclv(int base_level);
 int randomenc(int e_level, WeaponType weapon_type);
 int randomencp(bool has_ehekatl_feat, int hammer_enhancement);
 

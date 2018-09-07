@@ -14,6 +14,10 @@ constexpr auto end = 1 * 10000 * 10000;
 constexpr auto seaching_type = 34;
 constexpr auto power_threshold = 545;
 
+constexpr auto has_ehekatl_feat = true;
+constexpr auto hammer_enhancement = 0;
+constexpr auto weapon_type = WeaponType::melee;
+constexpr auto level = 1;
 
 
 
@@ -45,11 +49,6 @@ void show_weapon_title(int weapon_seed)
 
 void process_one_title(int page, int n)
 {
-    const auto has_ehekatl_feat = true;
-    const auto hammer_enhancement = 0;
-    const auto weapon_type = WeaponType::melee;
-    const auto level = 1;
-
     const auto weapon_seed = 10500 + page * 17 + n;
     show_weapon_title(weapon_seed);
     randomize(weapon_seed + 40000);
@@ -60,7 +59,7 @@ void process_one_title(int page, int n)
         const auto seed = weapon_seed + 40000 + level * 10 + i;
         randomize(seed);
         exrand_randomize(seed);
-        const auto e_level = randomenclv(4);
+        const auto e_level = rnd(5);
         const auto e_type = randomenc(e_level, weapon_type);
         const auto e_power = randomencp(has_ehekatl_feat, hammer_enhancement);
         const auto e_type2 = encadd(e_type);
@@ -86,11 +85,6 @@ void process_one_title(int page, int n)
 template <int type, int threshold>
 bool match_enchantment(int page, int n)
 {
-    const auto has_ehekatl_feat = true;
-    const auto hammer_enhancement = 0;
-    const auto weapon_type = WeaponType::melee;
-    const auto level = 1;
-
     const auto weapon_seed = 10500 + page * 17 + n;
 
     for (int i = 0; i < 50; ++i)
@@ -98,7 +92,7 @@ bool match_enchantment(int page, int n)
         const auto seed = weapon_seed + 40000 + level * 10 + i;
         randomize(seed);
         exrand_randomize(seed);
-        const auto e_level = randomenclv(4);
+        const auto e_level = rnd(5);
         const auto e_type = randomenc(e_level, weapon_type);
         if (type >= 20 && e_type != type)
         {

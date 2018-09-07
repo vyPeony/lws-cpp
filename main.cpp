@@ -63,7 +63,7 @@ void process_one_title(int page, int n)
         }
     }
 
-    std::cout << "puts \"" << weapon_seed + 40000 << ",#{title},#{desc}," << blood << "\"" << std::endl;
+    std::cout << "puts \"" << weapon_seed + 40000 << "," << page << ",#{title},#{desc}," << blood << "\"" << std::endl;
 }
 
 
@@ -132,7 +132,7 @@ int enhances_spells(int page, int n)
 // }
 int main()
 {
-    std::cout << "puts 'Id,Name,Enchantment,Power'" << std::endl;
+    std::cout << "puts 'Id,Page,Name,Enchantment,Power'" << std::endl;
 
     const auto page_max = 1000 * 1000;
     for (int page = 0; page < page_max; ++page)

@@ -331,11 +331,11 @@ std::vector<std::string> csvsort(const std::string& line, char separator)
 
 
 
-std::vector<std::vector<std::string>> load_rnlist()
+std::vector<std::vector<std::string>> load_rnlist(const std::string& filename)
 {
     std::vector<std::vector<std::string>> rnlist;
 
-    std::ifstream in{"ndata.csv", std::ios::binary};
+    std::ifstream in{filename, std::ios::binary};
     if (!in)
     {
         throw std::runtime_error{"Failed to load ndata.csv."};
@@ -353,7 +353,8 @@ std::vector<std::vector<std::string>> load_rnlist()
 
 std::string random_title()
 {
-    static const auto rnlist = load_rnlist();
+    static const auto rnlist = load_rnlist("ndata.csv");
+    static const auto rnlist2 = load_rnlist("ndata-utf8.csv");
 
     // "具"
     const auto category_concrete = std::string{
@@ -401,15 +402,12 @@ std::string random_title()
         static_cast<char>(0x45),
     };
 
-    int p_;
     int p_1;
     int p_2;
-    int p_3;
     int p_4;
-    std::string s_;
     std::string randn2_;
+    std::string randn2_u;
     std::string randn2_1;
-    int rtval_;
 
 retry:
     while (true)
@@ -426,8 +424,8 @@ retry:
         goto retry;
     }
     randn2_ = rnlist[p_2][p_1];
+    randn2_u = rnlist2[p_2][p_1];
     randn2_1 = rnlist[p_2][14];
-    rtval_ = -1;
     do
     {
         if (p_1 == 10 || p_1 == 11)
@@ -435,45 +433,41 @@ retry:
             if (rnd(5) == 0)
             {
                 p_1 = 0;
-                p_3 = rnd(2);
-                if (p_3 == 0)
+                if (rnd(2) == 0)
                 {
                     randn2_ += no;
+                    randn2_u += "の";
                 }
                 break;
             }
-            p_ = rnd(5);
-            if (p_ == 0)
+            switch (rnd(5))
             {
+            case 0:
                 randn2_ += of;
-            }
-            if (p_ == 1)
-            {
-                randn2_ = the + randn2_;
-                rtval_ = 1;
+                randn2_u += "・オブ・";
                 break;
-            }
-            if (p_ == 2)
-            {
+            case 1:
+                return "ザ・" + randn2_u;
+            case 2:
                 randn2_ += sep;
+                randn2_u += "・";
+                break;
+            default:
+                break;
             }
         }
         if (p_1 == 0 || p_1 == 1)
         {
             randn2_ += no;
-            p_3 = rnd(10);
-            if (p_3 == 0)
+            randn2_u += "の";
+            if (rnd(10) == 0)
             {
                 p_1 = 10;
             }
         }
     } while (false);
-    if (rtval_ == 1)
-    {
-        s_ = randn2_;
-        goto the_end;
-    }
-    rtval_ = -1;
+
+    bool ok{};
     for (int i = 0; i < 100; ++i)
     {
         p_4 = rnd(static_cast<int>(rnlist.size()));
@@ -500,22 +494,22 @@ retry:
         {
             continue;
         }
-        rtval_ = 1;
+        ok = true;
         break;
     }
-    if (rtval_ == -1)
-    {
-        goto retry;
-    }
-    randn2_ += rnlist[p_4][p_1];
-    s_ = randn2_;
-    if (s_.size() >= 28)
+    if (!ok)
     {
         goto retry;
     }
 
-the_end:
-    return s_;
+    randn2_ += rnlist[p_4][p_1];
+    randn2_u += rnlist2[p_4][p_1];
+    if (randn2_.size() >= 28)
+    {
+        goto retry;
+    }
+
+    return randn2_u;
 }
 
 

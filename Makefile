@@ -17,9 +17,7 @@ all: test
 test: build
 	@echo ----- run -----
 	@date +"%H:%M:%S"
-	-@$(RM) -f tmp.rb
-	@$(PROGRAM) > tmp.rb
-	@ruby tmp.rb
+	@$(PROGRAM)
 	@date +"%H:%M:%S"
 
 

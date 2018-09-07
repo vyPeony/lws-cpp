@@ -33,30 +33,18 @@ std::string get_weapon_title(int weapon_seed)
 
 
 
-void show_weapon_title(int weapon_seed)
-{
-    std::cout << "title = [";
-    const auto title = get_weapon_title(weapon_seed);
-    for (const auto c : title)
-    {
-        const auto n = static_cast<int>(static_cast<uint8_t>(c));
-        std::cout << n << ",";
-    }
-    std::cout << "].pack('c*').force_encoding('Shift_JIS').encode('UTF-8')" << std::endl;
-}
-
-
-
 void process_one_title(int page, int n)
 {
-    const auto weapon_seed = 10500 + page * 17 + n;
-    show_weapon_title(weapon_seed);
-    randomize(weapon_seed + 40000);
+    const auto weapon_seed = 50500 + page * 17 + n;
+    const auto weapon_title = get_weapon_title(weapon_seed - 40000);
+    randomize(weapon_seed);
     const auto blood = 4 + rnd(12);
+
+    std::string desc;
 
     for (int i = 0; i < 50; ++i)
     {
-        const auto seed = weapon_seed + 40000 + level * 10 + i;
+        const auto seed = weapon_seed + level * 10 + i;
         randomize(seed);
         exrand_randomize(seed);
         const auto e_level = rnd(5);
@@ -72,12 +60,12 @@ void process_one_title(int page, int n)
                     continue;
                 }
             }
-            std::cout << "desc = '" << get_e_desc(e_type2, e_power) << "," << e_power << "'" <<std::endl;
+            desc = get_e_desc(e_type2, e_power);
             break;
         }
     }
 
-    std::cout << "puts \"" << weapon_seed + 40000 << "," << (page + 1) << ",#{title},#{desc}," << blood << "\"" << std::endl;
+    std::cout << weapon_seed << "," << (page + 1) << "," << weapon_title << "," << desc << "," << blood << std::endl;
 }
 
 
@@ -85,11 +73,11 @@ void process_one_title(int page, int n)
 template <int type, int threshold>
 bool match_enchantment(int page, int n)
 {
-    const auto weapon_seed = 10500 + page * 17 + n;
+    const auto weapon_seed = 50500 + page * 17 + n;
 
     for (int i = 0; i < 50; ++i)
     {
-        const auto seed = weapon_seed + 40000 + level * 10 + i;
+        const auto seed = weapon_seed + level * 10 + i;
         randomize(seed);
         exrand_randomize(seed);
         const auto e_level = rnd(5);
@@ -119,7 +107,7 @@ bool match_enchantment(int page, int n)
 
 // int main()
 // {
-//     std::cout << "puts 'Id,Name,Enchantment,Power'" << std::endl;
+//     std::cout << "Id,Name,Enchantment,Power" << std::endl;
 //
 //     const auto page_max = 1;
 //     for (int page = 0; page < page_max; ++page)
@@ -128,7 +116,7 @@ bool match_enchantment(int page, int n)
 //         {
 //             if (i % 17 == 0)
 //             {
-//                 std::cout << "puts '(選択不可)'" << std::endl;
+//                 std::cout << "(選択不可)" << std::endl;
 //                 continue;
 //             }
 //             process_one_title(page, i);
@@ -141,7 +129,7 @@ int main()
 {
     init_enclist_table();
 
-    std::cout << "puts 'Id,Page,Name,Enchantment,Power'" << std::endl;
+    std::cout << "Id,Name,Enchantment,Power" << std::endl;
 
 
 
@@ -156,8 +144,8 @@ int main()
     //     process_one_title(p, j);
     // }
 
-    int begin = 0;
-    int end = 17;
+    // int begin = 0;
+    // int end = 100;
 
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;
@@ -167,7 +155,7 @@ int main()
         for (int i = 1; i < 17; ++i)
         {
             const auto match = match_enchantment<seaching_type, power_threshold>(p, i);
-            // if (match)
+            if (match)
             {
                 process_one_title(p, i);
             }

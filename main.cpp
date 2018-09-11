@@ -15,12 +15,12 @@
 constexpr auto begin = 0;
 constexpr auto end = 5000 * 17;
 constexpr auto seaching_type = 34;
-constexpr auto power_threshold = 470;
+constexpr auto power_threshold = 400;
 
 constexpr auto has_ehekatl_feat = true;
 constexpr auto hammer_enhancement = 0;
 constexpr auto weapon_type = WeaponType::melee;
-// constexpr auto level = 1;
+constexpr auto level = 1;
 
 
 
@@ -108,18 +108,18 @@ uint32_t get_num_threads()
 
 
 
-// void search(gentleman::random::Generator& gen, int page)
-// {
-//     for (int i = 1; i < 17; ++i)
-//     {
-//         const auto weapon_seed = 50500 + page * 17 + i;
-//         const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold, level);
-//         if (match)
-//         {
-//             process_one_title(gen, weapon_seed, level);
-//         }
-//     }
-// }
+void search(gentleman::random::Generator& gen, int page)
+{
+    for (int i = 1; i < 17; ++i)
+    {
+        const auto weapon_seed = 50500 + page * 17 + i;
+        const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold, level);
+        if (match)
+        {
+            process_one_title(gen, weapon_seed, level);
+        }
+    }
+}
 
 
 
@@ -131,17 +131,11 @@ int main()
 
     std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
 
-    // const auto page_begin = begin / 17;
-    // const auto page_end = end / 17;
-    //
-    // const auto num_threads = get_num_threads();
-    // const auto page_per_thread = std::max(1, (page_end - page_begin) / static_cast<int>(num_threads));
-
     gentleman::random::Generator gen;
     for (int level = 1; level < 15; ++level)
     {
         std::cout << level << "→" << (level+1) << std::endl;
-        const auto id_base = 111689 + (level-1) * -10 - 2;
+        const auto id_base = 126651 + (level-1) * -10 - 2;
         for (int i = 0; i < 3; ++i)
         {
             const auto id = id_base + i;
@@ -154,7 +148,12 @@ int main()
         std::cout << std::endl;
     }
 
-    
+    // const auto page_begin = begin / 17;
+    // const auto page_end = end / 17;
+    //
+    // const auto num_threads = get_num_threads();
+    // const auto page_per_thread = std::max(1, (page_end - page_begin) / static_cast<int>(num_threads));
+    //
     // std::vector<std::thread> threads;
     //
     // int b = page_begin;

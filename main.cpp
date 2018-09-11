@@ -12,15 +12,15 @@
 // MODIFY HERE.
 
 // [begin, end)
-// constexpr auto begin = 0;
-// constexpr auto end = 100000 * 17;
-// constexpr auto seaching_type = 34;
-// constexpr auto power_threshold = 500;
+constexpr auto begin = 0;
+constexpr auto end = 5000 * 17;
+constexpr auto seaching_type = 34;
+constexpr auto power_threshold = 470;
 
 constexpr auto has_ehekatl_feat = true;
 constexpr auto hammer_enhancement = 0;
 constexpr auto weapon_type = WeaponType::melee;
-// constexpr auto level = 4;
+// constexpr auto level = 1;
 
 
 
@@ -73,31 +73,31 @@ void process_one_title(gentleman::random::Generator& gen, int weapon_seed, int l
 
 
 
-// bool match_enchantment(gentleman::random::Generator& gen, int weapon_seed, int type, int threshold)
-// {
-//     for (int i = 0; i < 3; ++i)
-//     {
-//         const auto seed = weapon_seed + level * 10 + i;
-//         gen.randomize(seed);
-//         const auto e_level = gen.rnd(5);
-//         const auto e_type = randomenc(gen, e_level, weapon_type);
-//         const auto e_power = randomencp(gen, has_ehekatl_feat, hammer_enhancement);
-//         const auto e_type2 = encadd(gen, e_type);
-//         if (e_type2 != 0)
-//         {
-//             if (e_type2 == 34)
-//             {
-//                 if (gen.rnd(3))
-//                 {
-//                     continue;
-//                 }
-//             }
-//             return e_type2 == type && e_power >= threshold;
-//         }
-//     }
-//
-//     return false;
-// }
+bool match_enchantment(gentleman::random::Generator& gen, int weapon_seed, int type, int threshold, int level)
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        const auto seed = weapon_seed + level * 10 + i;
+        gen.randomize(seed);
+        const auto e_level = gen.rnd(5);
+        const auto e_type = randomenc(gen, e_level, weapon_type);
+        const auto e_power = randomencp(gen, has_ehekatl_feat, hammer_enhancement);
+        const auto e_type2 = encadd(gen, e_type);
+        if (e_type2 != 0)
+        {
+            if (e_type2 == 34)
+            {
+                if (gen.rnd(3))
+                {
+                    continue;
+                }
+            }
+            return e_type2 == type && e_power >= threshold;
+        }
+    }
+
+    return false;
+}
 
 
 
@@ -113,10 +113,10 @@ uint32_t get_num_threads()
 //     for (int i = 1; i < 17; ++i)
 //     {
 //         const auto weapon_seed = 50500 + page * 17 + i;
-//         const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
+//         const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold, level);
 //         if (match)
 //         {
-//             process_one_title(gen, weapon_seed);
+//             process_one_title(gen, weapon_seed, level);
 //         }
 //     }
 // }
@@ -141,7 +141,7 @@ int main()
     for (int level = 1; level < 15; ++level)
     {
         std::cout << level << "→" << (level+1) << std::endl;
-        const auto id_base = 88287 + (level-1) * -10 - 2;
+        const auto id_base = 111689 + (level-1) * -10 - 2;
         for (int i = 0; i < 3; ++i)
         {
             const auto id = id_base + i;

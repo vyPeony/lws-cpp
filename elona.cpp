@@ -18,10 +18,10 @@ struct EncRef
 
 const std::vector<EncRef> encref_base{
     {1,  1, 3000},
-    {2,  3, 7500},
+    {2,  2, 2500},
     {3,  0, 4500},
     {6,  0, 4500},
-    {7,  2, 900},
+    {7,  1, 300},
     {22, 1, 150},
     {23, 1, 400},
     {24, 2, 300},
@@ -257,7 +257,7 @@ std::string get_e_desc(int e_type, int e_power)
 
 int randomele(gentleman::random::Generator& gen)
 {
-    return gen.rnd(11);
+    return gen.rnd(11) + 50;
 }
 
 

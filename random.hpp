@@ -60,21 +60,23 @@ namespace random
 class Generator
 {
 public:
-    Generator(int32_t seed = 0)
+    Generator(std::random_device::result_type seed = 0)
     {
         randomize(seed);
     }
 
 
-    int32_t rnd(int32_t max)
+    template <typename Integer>
+    int32_t rnd(Integer max)
     {
         return rndex(max);
     }
 
 
-    int32_t rndex(int32_t max)
+    template <typename Integer>
+    int32_t rndex(Integer max)
     {
-        return std::uniform_int_distribution<>{0, std::max(0, max - 1)}(engine);
+        return std::uniform_int_distribution<Integer>{Integer{0}, std::max(Integer{0}, max - 1)}(engine);
     }
 
 

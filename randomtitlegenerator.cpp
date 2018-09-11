@@ -113,7 +113,7 @@ void RandomTitleGenerator::initialize()
 
 std::string RandomTitleGenerator::generate(int seed) const
 {
-    gentleman::random::Generator gen{seed};
+    gentleman::random::Generator gen(seed);
 
     // "具"
     const auto category_concrete = u8"具";

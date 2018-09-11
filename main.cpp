@@ -39,36 +39,41 @@ std::mutex cout_mutex;
 void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
 {
     const auto weapon_title = title_generator.generate(weapon_seed - 40000);
-    gen.randomize(weapon_seed);
-    const auto blood = 4 + gen.rnd(12);
-
-    int type{};
-    int power{};
-    for (int i = 0; i < 50; ++i)
+    if (weapon_title.find(u8"ドラゴン") == std::string::npos && weapon_title.find(u8"ドラグーン") == std::string::npos && weapon_title.find(u8"龍") == std::string::npos && weapon_title.find(u8"竜") == std::string::npos)
     {
-        const auto seed = weapon_seed + level * 10 + i;
-        gen.randomize(seed);
-        const auto e_level = gen.rnd(5);
-        const auto e_type = randomenc(gen, e_level, weapon_type);
-        const auto e_power = randomencp(gen, has_ehekatl_feat, hammer_enhancement);
-        const auto e_type2 = encadd(gen, e_type);
-        if (e_type2 != 0)
-        {
-            if (e_type2 == 34)
-            {
-                if (gen.rnd(3))
-                {
-                    continue;
-                }
-            }
-            type = e_type2;
-            power = e_power;
-            break;
-        }
+        return;
     }
+    // gen.randomize(weapon_seed);
+    // const auto blood = 4 + gen.rnd(12);
+
+    // int type{};
+    // int power{};
+    // for (int i = 0; i < 50; ++i)
+    // {
+    //     const auto seed = weapon_seed + level * 10 + i;
+    //     gen.randomize(seed);
+    //     const auto e_level = gen.rnd(5);
+    //     const auto e_type = randomenc(gen, e_level, weapon_type);
+    //     const auto e_power = randomencp(gen, has_ehekatl_feat, hammer_enhancement);
+    //     const auto e_type2 = encadd(gen, e_type);
+    //     if (e_type2 != 0)
+    //     {
+    //         if (e_type2 == 34)
+    //         {
+    //             if (gen.rnd(3))
+    //             {
+    //                 continue;
+    //             }
+    //         }
+    //         type = e_type2;
+    //         power = e_power;
+    //         break;
+    //     }
+    // }
 
     std::lock_guard<std::mutex> guard{cout_mutex};
-    std::cout << weapon_seed << "," << ((weapon_seed - 50500) / 17 + 1) << "," << weapon_title << "," << get_e_desc(type, power) << "," << power << "," << blood << std::endl;
+    // std::cout << weapon_seed << "," << ((weapon_seed - 50500) / 17 + 1) << "," << weapon_title << "," << get_e_desc(type, power) << "," << power << "," << blood << std::endl;
+    std::cout << weapon_seed << "," << ((weapon_seed - 50500) / 17 + 1) << "," << weapon_title << std::endl;
 }
 
 
@@ -113,8 +118,8 @@ void search(gentleman::random::Generator& gen, int page)
     for (int i = 1; i < 17; ++i)
     {
         const auto weapon_seed = 50500 + page * 17 + i;
-        const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
-        if (match)
+        // const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
+        // if (match)
         {
             process_one_title(gen, weapon_seed);
         }
@@ -129,7 +134,7 @@ int main()
 
     init_enclist_table();
 
-    std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
+    std::cout << "Id,Page,Name" << std::endl;
 
     const auto page_begin = begin / 17;
     const auto page_end = end / 17;

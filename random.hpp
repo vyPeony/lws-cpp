@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <random>
 
 
 /*
@@ -60,53 +61,32 @@ class Generator
 {
 public:
     Generator(int32_t seed = 0)
-        : linear_seed(static_cast<int64_t>(seed))
     {
-        init_genrand(static_cast<uint64_t>(seed));
+        randomize(seed);
     }
 
 
     int32_t rnd(int32_t max)
     {
-        linear_seed = linear_seed * 214013 + 2531011;
-        return static_cast<int32_t>((linear_seed >> 16) & 32767) % max;
+        return rndex(max);
     }
 
 
     int32_t rndex(int32_t max)
     {
-        return static_cast<int32_t>(genrand_real2() * max);
+        return std::uniform_int_distribution<>{0, std::max(0, max - 1)}(engine);
     }
 
 
     void randomize(int32_t new_seed)
     {
-        linear_seed = new_seed;
-        init_genrand(new_seed);
+        engine.seed(new_seed);
     }
 
 
 
 private:
-    /* Period parameters */
-    static constexpr int N = 624;
-    static constexpr int M = 397;
-    static constexpr unsigned long MATRIX_A = 0x9908b0dfUL;   /* constant vector a */
-    static constexpr unsigned long UMASK = 0x80000000UL; /* most significant w-r bits */
-    static constexpr unsigned long LMASK = 0x7fffffffUL; /* least significant r bits */
-
-
-    int64_t linear_seed;
-
-    unsigned long state[N]; /* the array for the state vector  */
-    int left = 1;
-    int initf = 0;
-    unsigned long *next;
-
-
-    void init_genrand(unsigned long s);
-    void next_state();
-    double genrand_real2();
+    std::mt19937 engine;
 };
 
 

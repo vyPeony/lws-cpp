@@ -13,7 +13,8 @@
 
 // [begin, end)
 constexpr auto begin = 0;
-constexpr auto end = 1 * 10000 * 10000;
+// constexpr auto end = 1 * 10000 * 10000;
+constexpr auto end = 17;
 constexpr auto seaching_type = 34;
 constexpr auto power_threshold = 545;
 
@@ -44,7 +45,7 @@ void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
 
     int type{};
     int power{};
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < 3; ++i)
     {
         const auto seed = weapon_seed + level * 10 + i;
         gen.randomize(seed);
@@ -75,7 +76,7 @@ void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
 
 bool match_enchantment(gentleman::random::Generator& gen, int weapon_seed, int type, int threshold)
 {
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < 3; ++i)
     {
         const auto seed = weapon_seed + level * 10 + i;
         gen.randomize(seed);
@@ -113,8 +114,8 @@ void search(gentleman::random::Generator& gen, int page)
     for (int i = 1; i < 17; ++i)
     {
         const auto weapon_seed = 50500 + page * 17 + i;
-        const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
-        if (match)
+        // const auto match = match_enchantment(gen, weapon_seed, seaching_type, power_threshold);
+        // if (match)
         {
             process_one_title(gen, weapon_seed);
         }

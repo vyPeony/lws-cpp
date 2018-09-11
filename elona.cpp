@@ -257,36 +257,7 @@ std::string get_e_desc(int e_type, int e_power)
 
 int randomele(gentleman::random::Generator& gen)
 {
-    const std::array<int, 11> rarity{{
-        1,
-        1,
-        1,
-        2,
-        2,
-        3,
-        4,
-        3,
-        3,
-        4,
-        5,
-    }};
-
-    auto e = gen.rnd(11);
-    const auto r = rarity[e];
-    for (int i = 0; i < r - 1; ++i)
-    {
-        const auto e2 = gen.rnd(11);
-        const auto r2 = rarity[e2];
-        if (r2 < r)
-        {
-            if (gen.rnd(2) == 0)
-            {
-                e = e2;
-            }
-        }
-    }
-
-    return e + 50;
+    return gen.rnd(11);
 }
 
 

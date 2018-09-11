@@ -9,6 +9,47 @@ namespace
 
 
 
+size_t byte_count(uint8_t c)
+{
+    if (c <= 0x7F)
+        return 1;
+    else if (c >= 0xc2 && c <= 0xdf)
+        return 2;
+    else if (c >= 0xe0 && c <= 0xef)
+        return 3;
+    else if (c >= 0xf0 && c <= 0xf7)
+        return 4;
+    else if (c >= 0xf8 && c <= 0xfb)
+        return 5;
+    else if (c >= 0xfc && c <= 0xfd)
+        return 6;
+    else
+        return 1;
+}
+
+
+
+size_t byte_count(char c)
+{
+    return byte_count(static_cast<uint8_t>(c));
+}
+
+
+
+size_t calc_width(const std::string& str)
+{
+    int ret = 0;
+    for (size_t i = 0; i < str.size();)
+    {
+        const auto byte = byte_count(str[i]);
+        ret += byte == 1 ? 1 : 2;
+        i += byte;
+    }
+    return ret;
+}
+
+
+
 std::vector<std::string> split_record(const std::string& line)
 {
     std::vector<std::string> fields{15};
@@ -64,7 +105,7 @@ namespace elona
 
 void RandomTitleGenerator::initialize()
 {
-    word_table_cp932 = load_word_table("ndata.csv");
+    word_table_cp932 = load_word_table("ndata-utf8.csv");
     word_table_utf8 = load_word_table("ndata-utf8.csv");
 }
 
@@ -75,42 +116,19 @@ std::string RandomTitleGenerator::generate(int seed) const
     gentleman::random::Generator gen{seed};
 
     // "具"
-    const auto category_concrete = std::string{
-        static_cast<char>(0x8B),
-        static_cast<char>(0xEF),
-    };
+    const auto category_concrete = u8"具";
 
     // "万能"
-    const auto category_general = std::string{
-        static_cast<char>(0x96),
-        static_cast<char>(0x9C),
-        static_cast<char>(0x94),
-        static_cast<char>(0x5C),
-    };
+    const auto category_general = u8"万能";
 
     // "の"
-    const auto no = std::string{
-        static_cast<char>(0x82),
-        static_cast<char>(0xCC),
-    };
+    const auto no = u8"の";
 
     // "・オブ・"
-    const auto of = std::string{
-        static_cast<char>(0x81),
-        static_cast<char>(0x45),
-        static_cast<char>(0x83),
-        static_cast<char>(0x49),
-        static_cast<char>(0x83),
-        static_cast<char>(0x75),
-        static_cast<char>(0x81),
-        static_cast<char>(0x45),
-    };
+    const auto of = u8"・オブ・";
 
     // "・"
-    const auto sep = std::string{
-        static_cast<char>(0x81),
-        static_cast<char>(0x45),
-    };
+    const auto sep = u8"・";
 
     int p_1;
     int p_2;
@@ -214,7 +232,7 @@ retry:
 
     randn2_ += word_table_cp932[p_4][p_1];
     randn2_u += word_table_utf8[p_4][p_1];
-    if (randn2_.size() >= 28)
+    if (calc_width(randn2_) >= 28)
     {
         goto retry;
     }

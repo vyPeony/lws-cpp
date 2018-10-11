@@ -2,6 +2,9 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <algorithm>
+#include <locale>
+#include <Windows.h>
 
 #include "elona.hpp"
 #include "randomtitlegenerator.hpp"
@@ -25,7 +28,7 @@ constexpr auto level = 1;
 
 
 
-
+using namespace std;
 using namespace hsprnd;
 
 
@@ -103,7 +106,7 @@ bool match_enchantment(gentleman::random::Generator& gen, int weapon_seed, int t
 
 uint32_t get_num_threads()
 {
-    return std::max(std::thread::hardware_concurrency(), 1U);
+    return (std::max)(std::thread::hardware_concurrency(), 1U);
 }
 
 
@@ -125,17 +128,20 @@ void search(gentleman::random::Generator& gen, int page)
 
 int main()
 {
+	SetConsoleOutputCP(CP_UTF8);
+	setvbuf(stdout, nullptr, _IOFBF, 1024);
+
     title_generator.initialize();
 
     init_enclist_table();
 
     std::cout << "Id,Page,Name,Enc,Power,Blood" << std::endl;
 
-    const auto page_begin = begin / 17;
-    const auto page_end = end / 17;
+    const auto page_begin = ::begin / 17;
+    const auto page_end = ::end / 17;
 
     const auto num_threads = get_num_threads();
-    const auto page_per_thread = std::max(1, (page_end - page_begin) / static_cast<int>(num_threads));
+    const auto page_per_thread = (std::max)(1, (page_end - page_begin) / static_cast<int>(num_threads));
 
     std::vector<std::thread> threads;
 

@@ -164,6 +164,10 @@ xcopy /Q /Y ndata-utf8.csv $(TargetDir)</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Q /Y ndata.csv $(TargetDir)
+xcopy /Q /Y ndata-utf8.csv $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="elona.hpp" />

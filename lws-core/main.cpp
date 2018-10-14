@@ -126,7 +126,7 @@ void search(gentleman::random::Generator& gen, int page)
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
 	SetConsoleOutputCP(CP_UTF8);
 	setvbuf(stdout, nullptr, _IOFBF, 1024);

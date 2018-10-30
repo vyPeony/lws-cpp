@@ -21,7 +21,7 @@ namespace lws_form
 
             Process p = new Process();
             p.StartInfo.FileName = @"lws-core.exe";
-            //p.StartInfo.Arguments =
+            p.StartInfo.Arguments = "";
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;

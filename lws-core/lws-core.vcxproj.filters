@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="getopt">
+      <UniqueIdentifier>{874c1047-d5af-47a4-9ec7-b9da90abad53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="elona.hpp">
@@ -27,6 +30,9 @@
     <ClInclude Include="weapon_type.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="getopt.h">
+      <Filter>getopt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="elona.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="getopt.cpp">
+      <Filter>getopt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

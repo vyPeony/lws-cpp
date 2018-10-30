@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <locale>
 #include <Windows.h>
+#include "getopt.h"
 
 #include "elona.hpp"
 #include "randomtitlegenerator.hpp"
@@ -15,28 +16,32 @@
 // MODIFY HERE.
 
 // [begin, end)
-constexpr auto begin = 0;
-constexpr auto end = 1 * 10000 * 10000;
-constexpr auto seaching_type = 34;
-constexpr auto power_threshold = 545;
+auto begin = 0;
+auto end = 1 * 10000 * 10000;
+auto seaching_type = 34;
+auto power_threshold = 545;
 
-constexpr auto has_ehekatl_feat = true;
-constexpr auto hammer_enhancement = 0;
-constexpr auto weapon_type = WeaponType::melee;
-constexpr auto level = 1;
+auto has_ehekatl_feat = true;
+auto hammer_enhancement = 0;
+auto weapon_type = WeaponType::melee;
+auto level = 1;
 
-
-
+struct option longoptions[] = {
+	{ "Begin",      required_argument, NULL, 'b' },
+	{ "End",        required_argument, NULL, 'e' },
+	{ "SearchType", required_argument, NULL, 's' },
+	{ "Threshold",  required_argument, NULL, 't' },
+	{ "Ehekatl",    no_argument,       NULL, 'u' },
+	{ "Hammer",     required_argument, NULL, 'h' },
+	{ "WeaponType", required_argument, NULL, 'w' },
+	{ "Level",      required_argument, NULL, 'l' },
+	{0, 0, 0, 0},
+};
 
 using namespace std;
 using namespace hsprnd;
 
-
 gentleman::elona::RandomTitleGenerator title_generator;
-
-
-
-
 std::mutex cout_mutex;
 
 void process_one_title(gentleman::random::Generator& gen, int weapon_seed)
@@ -130,6 +135,37 @@ int main(int argc, char* argv[])
 {
 	SetConsoleOutputCP(CP_UTF8);
 	setvbuf(stdout, nullptr, _IOFBF, 1024);
+	int opt = -1;
+	int longindex = -1;
+	while ((opt = getopt_long(argc, argv, "b:e:s:t:uh:w:l::", longoptions, &longindex)) != -1) {
+		switch (opt) {
+		case 'b':
+			::begin = atoi(optarg);
+			break;
+		case 'e':
+			::end = atoi(optarg);
+			break;
+		case 's':
+			::seaching_type = atoi(optarg);
+			break;
+		case 't':
+			::power_threshold = atoi(optarg);
+			break;
+		case 'u':
+			break;
+		case 'h':
+			::hammer_enhancement = atoi(optarg);
+			break;
+		case 'w':
+			break;
+		case 'l':
+			//::level = atoi(optarg);
+			break;
+		default:
+			std::cout << "Usage: ...." << std::endl;
+			break;
+		}
+	}
 
     title_generator.initialize();
 

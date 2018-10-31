@@ -3,17 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+        xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:local="clr-namespace:lws_form"
         mc:Ignorable="d"
-        Title="LWS - Living Weapon Simulator -" Height="533.571" Width="653.714" >
+        Title="LWS - Living Weapon Simulator -" Height="315.571" Width="847.714">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Path=ExitCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Window.DataContext>
         <local:LwsViewModel />
     </Window.DataContext>
-    
+
+    <Window.Resources>
+        <CollectionViewSource x:Key="IDSort" Source="{Binding Output}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="Id" Direction="Ascending"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+
     <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Height="32" Margin="10,10,0,0" VerticalAlignment="Top" Width="167" Command="{Binding ExecuteCommand}"/>
-        <ListView HorizontalAlignment="Left" Height="443" Margin="10,47,0,0" VerticalAlignment="Top" Width="625" ItemsSource="{Binding Output}">
+        <Button Content="Button" HorizontalAlignment="Left" Height="32" Margin="10,177,0,0" VerticalAlignment="Top" Width="167" Command="{Binding ExecuteCommand}"/>
+        <ListView HorizontalAlignment="Left" Height="266" Margin="212,10,0,0" VerticalAlignment="Top" Width="618"
+                  ItemsSource="{Binding Source={StaticResource IDSort}}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="100"/>
@@ -25,6 +42,14 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <ComboBox HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="197" ItemsSource="{Binding Path=EnchantGroupList}" SelectedIndex="{Binding SelectedGroupIndex.Value, Mode=TwoWay}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="197" ItemsSource="{Binding Path=EnchantNameList}" SelectedIndex="{Binding SelectedNameIndex.Value, Mode=TwoWay}"/>
+        <Label Content="開始ID" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="19" Margin="73,64,0,0" TextWrapping="Wrap" Text="{Binding StartID.Value, Mode=TwoWay}" VerticalAlignment="Top" Width="82"/>
+        <Label Content="終了ID" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="19" Margin="73,88,0,0" TextWrapping="Wrap" Text="{Binding EndID.Value, Mode=TwoWay}" VerticalAlignment="Top" Width="82"/>
+        <Label Content="閾値" HorizontalAlignment="Left" Margin="10,108,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="19" Margin="73,112,0,0" TextWrapping="Wrap" Text="{Binding Threshold.Value, Mode=TwoWay}" VerticalAlignment="Top" Width="82"/>
 
     </Grid>
 </Window>

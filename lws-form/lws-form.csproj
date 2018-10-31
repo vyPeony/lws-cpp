@@ -94,6 +94,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Const.cs" />
     <Compile Include="EnchantData.cs" />
     <Compile Include="ResourceManager.cs" />
     <Page Include="LwsMainView.xaml">

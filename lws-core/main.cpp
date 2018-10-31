@@ -157,6 +157,7 @@ int main(int argc, char* argv[])
 			::hammer_enhancement = atoi(optarg);
 			break;
 		case 'w':
+			weapon_type = static_cast<WeaponType>(atoi(optarg));
 			break;
 		case 'l':
 			//::level = atoi(optarg);

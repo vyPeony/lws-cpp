@@ -1,0 +1,24 @@
+version: 0.1.{build}
+
+branches:
+  only:
+    - master
+
+max_jobs: 1
+
+image: Visual Studio 2017
+
+platform: Any CPU 
+configuration: Release
+
+before_build:
+  - nuget restore
+after_build:
+  - del %APPVEYOR_BUILD_FOLDER%\bin\*.dll
+  - del %APPVEYOR_BUILD_FOLDER%\bin\*.config
+  - del %APPVEYOR_BUILD_FOLDER%\bin\*.pdb
+  - del %APPVEYOR_BUILD_FOLDER%\bin\*.xml
+  - ps: Compress-Archive -Path $env:APPVEYOR_BUILD_FOLDER\bin -Destination LWS.zip
+artifacts:
+  - path: LWS.zip
+

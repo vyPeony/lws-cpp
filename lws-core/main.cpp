@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
 			weapon_type = static_cast<WeaponType>(atoi(optarg));
 			break;
 		case 'l':
-			//::level = atoi(optarg);
+			::level = atoi(optarg);
 			break;
 		default:
 			std::cout << "Usage: ...." << std::endl;

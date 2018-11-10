@@ -50,6 +50,8 @@
         <TextBox HorizontalAlignment="Left" Height="19" Margin="73,88,0,0" TextWrapping="Wrap" Text="{Binding EndID.Value, Mode=TwoWay}" VerticalAlignment="Top" Width="82"/>
         <Label Content="閾値" HorizontalAlignment="Left" Margin="10,108,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="19" Margin="73,112,0,0" TextWrapping="Wrap" Text="{Binding Threshold.Value, Mode=TwoWay}" VerticalAlignment="Top" Width="82"/>
+        <Label Content="Lv" HorizontalAlignment="Left" Margin="10,132,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="19" Margin="73,136,0,0" TextWrapping="Wrap" Text="{Binding Level.Value, Mode=TwoWay}" VerticalAlignment="Top" Width="82"/>
 
     </Grid>
 </Window>

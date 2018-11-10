@@ -18,6 +18,7 @@ namespace lws_form
         public ReactiveProperty<string> StartID { get; set; } = new ReactiveProperty<string>("0");
         public ReactiveProperty<string> EndID { get; set; } = new ReactiveProperty<string>(Int32.MaxValue.ToString());
         public ReactiveProperty<string> Threshold { get; set; } = new ReactiveProperty<string>("541");
+        public ReactiveProperty<string> Level { get; set; } = new ReactiveProperty<string>("1");
         public ReactiveCollection<string> EnchantGroupList { get; set; } = new ReactiveCollection<string>();
         public ReactiveCollection<string> EnchantNameList { get; set; } = new ReactiveCollection<string>();
         public ReadOnlyReactiveCollection<EnchantData> Output { get; }
@@ -51,6 +52,7 @@ namespace lws_form
             param.EnchantmentPowerThreshold = Convert.ToInt32(Threshold.Value);
             param.BeginID = Convert.ToInt32(StartID.Value);
             param.EndID = Convert.ToInt32(EndID.Value);
+            param.Level = Convert.ToInt32(Level.Value);
             model?.RunLwsCore(param);
         }
         private void Exit()

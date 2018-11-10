@@ -16,7 +16,7 @@ namespace lws_form
         public ReactiveProperty<int> SelectedGroupIndex { get; set; } = new ReactiveProperty<int>();
         public ReactiveProperty<int> SelectedNameIndex { get; set; } = new ReactiveProperty<int>();
         public ReactiveProperty<string> StartID { get; set; } = new ReactiveProperty<string>("0");
-        public ReactiveProperty<string> EndID { get; set; } = new ReactiveProperty<string>(Int32.MaxValue.ToString());
+        public ReactiveProperty<string> EndID { get; set; } = new ReactiveProperty<string>("100000000");
         public ReactiveProperty<string> Threshold { get; set; } = new ReactiveProperty<string>("541");
         public ReactiveProperty<string> Level { get; set; } = new ReactiveProperty<string>("1");
         public ReactiveCollection<string> EnchantGroupList { get; set; } = new ReactiveCollection<string>();

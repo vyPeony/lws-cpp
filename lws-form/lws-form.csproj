@@ -98,6 +98,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Const.cs" />
+    <Compile Include="Converter\BoolEnumConverter.cs" />
     <Compile Include="EnchantData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ResourceManager.cs" />

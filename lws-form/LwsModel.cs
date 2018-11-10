@@ -12,6 +12,7 @@ namespace lws_form
         public int EndID;
         public int EnchantmentPowerThreshold;
         public int Level;
+        public int WeaponType;
     }
 
     class LwsModel : BindableBase
@@ -35,7 +36,7 @@ namespace lws_form
             coreProcess = new Process();
             coreProcess.StartInfo.FileName = @"lws-core.exe";
             coreProcess.StartInfo.Arguments = $"--SearchType {inParameter.EnchantmentID} -t {inParameter.EnchantmentPowerThreshold} -b {inParameter.BeginID} -e {inParameter.EndID}";
-            coreProcess.StartInfo.Arguments += $" -l {inParameter.Level}";
+            coreProcess.StartInfo.Arguments += $" -l {inParameter.Level} -w {inParameter.WeaponType}";
             coreProcess.StartInfo.Arguments += $"";
             coreProcess.StartInfo.CreateNoWindow = true;
             coreProcess.StartInfo.UseShellExecute = false;

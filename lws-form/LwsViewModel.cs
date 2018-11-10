@@ -7,6 +7,12 @@ using System.Collections.ObjectModel;
 
 namespace lws_form
 {
+    public enum WeaponType
+    {
+        Melee = 0,
+        Ranged
+    }
+
     public class LwsViewModel : BindableBase, IDisposable
     {
         private LwsModel model = null;
@@ -19,6 +25,7 @@ namespace lws_form
         public ReactiveProperty<string> EndID { get; set; } = new ReactiveProperty<string>("100000000");
         public ReactiveProperty<string> Threshold { get; set; } = new ReactiveProperty<string>("541");
         public ReactiveProperty<string> Level { get; set; } = new ReactiveProperty<string>("1");
+        public ReactiveProperty<WeaponType> WeaponType { get; set; } = new ReactiveProperty<WeaponType>(lws_form.WeaponType.Melee);
         public ReactiveCollection<string> EnchantGroupList { get; set; } = new ReactiveCollection<string>();
         public ReactiveCollection<string> EnchantNameList { get; set; } = new ReactiveCollection<string>();
         public ReadOnlyReactiveCollection<EnchantData> Output { get; }
@@ -52,6 +59,7 @@ namespace lws_form
             param.EnchantmentPowerThreshold = Convert.ToInt32(Threshold.Value);
             param.BeginID = Convert.ToInt32(StartID.Value);
             param.EndID = Convert.ToInt32(EndID.Value);
+            param.WeaponType = (Int32)WeaponType.Value;
             param.Level = Convert.ToInt32(Level.Value);
             model?.RunLwsCore(param);
         }
